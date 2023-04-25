@@ -15,6 +15,7 @@ connection
 
 // models
 const User = require('./models/User');
+const Category = require('./models/Category')
 
 //middlewares
 const app = express();
