@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize');
 const connection = require('../db');
 
-const Category = connection.define('categories', {
+const BuyList = connection.define('buylist', {
     name:{
         type: Sequelize.STRING,
         allowNull: false
     }
 })
 
-//Category.sync({force: true})
+//BuyList.sync({force: true})
 
-module.exports = Category;
+module.exports = BuyList;

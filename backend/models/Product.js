@@ -1,22 +1,23 @@
 const Sequelize = require('sequelize');
 const connection = require('../db');
+const Category = require("./Category")
 
-const User = connection.define('users', {
+const Product = connection.define('products', {
     name:{
         type: Sequelize.STRING,
         allowNull: false
-    }, email:{
+    }, measure:{ //medida
         type: Sequelize.STRING,
         allowNull: false
-    }, password:{
+    }, location:{
         type: Sequelize.STRING,
-        allowNull: false
-    }, isAdmin:{
-        type: Sequelize.BOOLEAN,
         allowNull: false
     }
 })
 
-//User.sync({force: true})
+Product.belongsTo(Category)
+Category.hasMany(Product)
 
-module.exports = User;
+//Product.sync({force: true})
+
+module.exports = Product;
