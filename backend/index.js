@@ -15,11 +15,12 @@ connection
 
 // models
 const User = require('./models/User');
-const Category = require('./models/Category')
-const Product = require('./models/Product')
-const Order = require('./models/Order')
-const Budget = require('./models/Budget')
-const BuyList = require('./models/BuyList')
+const Category = require('./models/Category');
+const Product = require('./models/Product');
+const Order = require('./models/Order');
+const Budget = require('./models/Budget');
+const BuyList = require('./models/BuyList');
+
 //middlewares
 const app = express();
 app.use(express.json());
