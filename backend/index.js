@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const connection = require("./db");
-const router = require('./routes/routes');
+const router = require('./routes/igorRoutes');
 const bodyParser = require("body-parser");
 
 // banco
