@@ -7,7 +7,7 @@
 3) Digite os seguintes comandos do git:
   - git init
   - git remote add origin https://github.com/DaniloNogueira-Silva/TIC_ESTOQUE
-  - git branch (para verificar se está na branch main)
+  - git branch -M main (para verificar se está na branch main)
   - git pull origin main (para trazer todos os arquivos que estão no repositório na núvem)
   - se não der chama o Éder :)
 4) Sempre que adicionar ou alterar algo do projeto, suba as mudanças para o repositório na núvem
