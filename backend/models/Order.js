@@ -1,13 +1,27 @@
-const Sequelize = require("sequelize")
-const connection = require("../db")
+const Sequelize = require('sequelize');
+const connection = require('../db');
+const Product = require("./Product")
 
 const Order = connection.define('orders', {
-    amount: {
-        type: Sequelize.INTEGER,
+    status: {
+        type: Sequelize.STRING,
         allowNull: false
-    }
+    },
+    //adicionar outras colunas conforme necessário
 })
 
-//Order.sync({force: true})
+const OrderItem = connection.define('order_items', {
+    quantity: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    // adicionar outras colunas conforme necessário
+})
 
-module.exports = Order
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
+
+//Order.sync({force: true})
+//OrderItem.sync({force: true})
+
+module.exports = { Order, OrderItem}
