@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user');
 const CategoryController = require('../controllers/category');
-const ProductController = require("../controllers/product")
+const ProductController = require('../controllers/product')
 const OrderController = require('../controllers/order');
+const BuyListController = require('../controllers/buylist')
 
 //category
 router.post('/admin/user', UserController.create);
@@ -30,6 +31,10 @@ router.post('/admin/order', OrderController.create);
 router.get('/admin/order', OrderController.showAll);
 router.delete('/admin/order/:id', OrderController.remove);
 
+//Buylist
+router.get('/admin/buylist', BuyListController.index)
+router.post('/admin/buylist', BuyListController.create)
+router.get('/admin/buylistsearch', BuyListController.showBuyList)
 
 
 module.exports = router;

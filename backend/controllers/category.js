@@ -4,7 +4,7 @@ class CategoryController {
 
     async showAll(req, res) {
         let categories = await Category.findAll()
-        res.json(categories)
+        res.status(200).send(categories)
     }
 
     async create(req, res) {
