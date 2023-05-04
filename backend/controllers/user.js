@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const userValidation = require("../validations/userValidations");
 
 class UserController {
 
@@ -21,6 +22,7 @@ class UserController {
 
   async create(req, res) {
     try {
+      await userValidation.validate(req.body)
       const name = req.body.name;
       const email = req.body.email;
       const password = req.body.password;

@@ -5,12 +5,11 @@ const CategoryController = require('../controllers/category');
 const ProductController = require('../controllers/product')
 const OrderController = require('../controllers/order');
 const BuyListController = require('../controllers/buylist')
-const BudgetController = require('../controllers/budget');
 
 //category
 router.post('/admin/user', UserController.create);
-router.get('/admin/category', CategoryController.showAll)
-router.post('/admin/category', CategoryController.create);
+router.get('/admin/category',AdminAuth, CategoryController.showAll)
+router.post('/admin/category', AdminAuth, CategoryController.create);
 router.delete('/admin/deleteCategory/:id', CategoryController.remove)
 
 //product
