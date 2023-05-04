@@ -5,6 +5,14 @@ const connection = require("./db");
 const router = require('./routes/routes');
 const bodyParser = require("body-parser");
 
+// models
+const User = require('./models/User');
+const Category = require('./models/Category');
+const Product = require('./models/Product');
+const Order = require('./models/Order');
+const Budget = require('./models/Budget');
+const BuyList = require('./models/BuyList');
+
 // banco
 connection
   .authenticate()
@@ -14,14 +22,6 @@ connection
   .catch((error) => {
     console.log(error);
   });
-
-// models
-const User = require('./models/User');
-const Category = require('./models/Category');
-const Product = require('./models/Product');
-const Order = require('./models/Order');
-const Budget = require('./models/Budget');
-const BuyList = require('./models/BuyList');
 
 //middlewares
 const app = express();
@@ -33,6 +33,7 @@ app.use(bodyParser.json());
 
 //rotas
 app.use('/', router);
+
 //iniciando o server
 const port = process.env.PORT;
 

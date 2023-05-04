@@ -4,10 +4,10 @@ const Product = require("../models/Product");
 class OrderController {
   async create(req, res) {
     try {
-      const { status, items } = req.body;
+      const { status, expected_date, items } = req.body;
 
       // Cria o pedido
-      const order = await Order.create({ status });
+      const order = await Order.create({ status, expected_date });
 
       // Adiciona os itens ao pedido
       const orderItems = await Promise.all(
@@ -28,6 +28,7 @@ class OrderController {
       const response = {
         id: order.id,
         status: order.status,
+        expected_date: order.expected_date,
         items: orderItems.map((item) => ({
           id: item.id,
           productId: item.productId,

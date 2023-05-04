@@ -7,6 +7,10 @@ const Order = connection.define('orders', {
         type: Sequelize.STRING,
         allowNull: false
     },
+    expected_date: {
+        type: Sequelize.DATE,
+        allowNull:false
+    }
     //adicionar outras colunas conforme necessário
 })
 
