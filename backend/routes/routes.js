@@ -5,6 +5,7 @@ const CategoryController = require('../controllers/category');
 const ProductController = require('../controllers/product')
 const OrderController = require('../controllers/order');
 const BuyListController = require('../controllers/buylist')
+const BudgetController = require('../controllers/budget');
 
 //category
 router.post('/admin/user', UserController.create);
@@ -35,6 +36,11 @@ router.delete('/admin/order/:id', OrderController.remove);
 router.get('/admin/buylist', BuyListController.index)
 router.post('/admin/buylist', BuyListController.create)
 router.get('/admin/buylistsearch', BuyListController.showBuyList)
+
+//Budget
+router.post('/admin/budget', BudgetController.create);
+router.get('/admin/budget', BudgetController.showAll);
+router.delete('/admin/budget/:id', BudgetController.remove);
 
 
 module.exports = router;
