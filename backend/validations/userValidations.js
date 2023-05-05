@@ -7,4 +7,8 @@ const userValidation = yup.object({
     isAdmin: yup.boolean().required()
 });
 
-module.exports = userValidation
+const passwordValidation = yup.object({ 
+    password: yup.string().required().min(6)
+});
+
+module.exports = {userValidation, passwordValidation}
