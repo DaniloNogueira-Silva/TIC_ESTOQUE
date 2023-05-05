@@ -54,6 +54,25 @@ class OrderController {
     }
   }
 
+  async getById(req, res) {
+    try {
+      const { id } = req.params;
+      const ordemItem = await OrderItem.findAll({where: {orderId: id}
+      });
+
+      if (!ordemItem) {
+        return res
+          .status(404)
+          .json({ message: "Item de pedido não encontrado" });
+      }
+
+      res.status(200).json(ordemItem);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erro ao buscar o item de pedido" });
+    }
+  }
+
   async remove(req, res) {
     let id = req.params.id
     await Order.destroy({ where: { id: id } })

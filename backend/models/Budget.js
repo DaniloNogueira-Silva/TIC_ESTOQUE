@@ -5,9 +5,6 @@ const Budget = connection.define('budgets', {
     name: {
         type: Sequelize.STRING,
         allowNull: false
-    }, file: {
-        type: Sequelize.STRING,
-        allowNull: false
     }, responsible_name: {
         type: Sequelize.STRING,
         allowNull: false
@@ -54,14 +51,25 @@ const BudgetItems = connection.define('budget_items',{
 })
 
 
-BudgetCompany.belongsToMany(BudgetPrice, { through: BudgetItems, onDelete: 'CASCADE' });
-BudgetPrice.belongsToMany(BudgetCompany, { through: BudgetItems, onDelete: 'CASCADE' });
-Budget.hasMany(BudgetItems);
+
+Budget.belongsTo(BudgetCompany);
+Budget.belongsTo(BudgetPrice);
 BudgetItems.belongsTo(Budget);
 
+// Adiciona as chaves estrangeiras às tabelas
+BudgetItems.belongsTo(BudgetCompany);
+BudgetItems.belongsTo(BudgetPrice);
+
+// Opções de exclusão em cascata
+BudgetCompany.hasMany(BudgetItems, { onDelete: 'CASCADE' });
+BudgetPrice.hasMany(BudgetItems, { onDelete: 'CASCADE' });
+
+// Sincroniza as tabelas
 //BudgetItems.sync({force:true})
 //Budget.sync({ force: true })
 //BudgetCompany.sync({ force: true })
 //BudgetPrice.sync({ force: true })
 
-module.exports = {Budget, BudgetCompany, BudgetPrice, BudgetItems};
+module.exports = {BudgetItems, Budget, BudgetCompany, BudgetPrice};
+
+

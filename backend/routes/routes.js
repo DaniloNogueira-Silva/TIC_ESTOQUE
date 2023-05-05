@@ -34,6 +34,7 @@ router.post('/changepassword', UserController.changePassword)
 router.post('/admin/order', OrderController.create);
 router.get('/admin/order', OrderController.showAll);
 router.delete('/admin/order/:id', OrderController.remove);
+router.get('/admin/order/:id', OrderController.getById);
 
 //Buylist
 router.get('/admin/buylist', BuyListController.index);
@@ -43,7 +44,8 @@ router.get('/admin/buylistsearch', BuyListController.showBuyList);
 //Budget
 router.post('/admin/budget', BudgetController.create);
 router.get('/admin/budget', BudgetController.showAll);
-router.delete('/admin/budget/:id', BudgetController.remove);
+router.get('/admin/budget/:id', BudgetController.getById);
+
 
 
 module.exports = router;

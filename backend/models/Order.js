@@ -25,6 +25,9 @@ const OrderItem = connection.define('order_items', {
 Order.belongsToMany(Product, { through: OrderItem });
 Product.belongsToMany(Order, { through: OrderItem });
 
+OrderItem.hasMany(Order);
+Order.belongsTo(OrderItem);
+
 //Order.sync({force: true})
 //OrderItem.sync({force: true})
 
