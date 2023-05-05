@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const connection = require('../db');
+const user = require('../controllers/user');
 
 const User = connection.define('users', {
     name:{
@@ -19,4 +20,18 @@ const User = connection.define('users', {
 
 //User.sync({force: true})
 
-module.exports = User;
+const PasswordToken = connection.define('passwordTokens', {
+    token:{
+        type: Sequelize.STRING,
+        allowNull: false
+    }, used: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+    } 
+})
+
+PasswordToken.belongsTo(User)
+User.hasMany(PasswordToken)
+//PasswordToken.sync({force: true})
+
+module.exports = {User, PasswordToken};

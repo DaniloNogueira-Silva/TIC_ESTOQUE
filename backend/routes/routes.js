@@ -27,6 +27,8 @@ router.get('/admin/user/:id', UserController.findById);
 router.delete('/admin/user/:id', UserController.remove);
 router.post('/admin/user/:id', UserController.update);
 router.post('/auth', UserController.login);
+router.post('/recoverpassword/:id', UserController.recoverPassword)
+router.post('/changepassword', UserController.changePassword)
 
 //order
 router.post('/admin/order', OrderController.create);
