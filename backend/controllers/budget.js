@@ -110,6 +110,7 @@ class BudgetController {
       }
 
       res.status(200).json(budgetItem);
+  
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Erro ao buscar o item de orçamento" });
