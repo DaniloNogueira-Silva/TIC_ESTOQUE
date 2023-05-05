@@ -1,7 +1,7 @@
 const {
+  BudgetItems,
   Budget,
   BudgetCompany,
-  BudgetItems,
   BudgetPrice,
 } = require("../models/Budget");
 
@@ -77,30 +77,44 @@ class BudgetController {
 
   async showAll(req, res) {
     try {
-      const budgets = await BudgetItems.findAll({
+      const budgetItems = await BudgetItems.findAll({
+        include: [
+          { model: Budget },
+          { model: BudgetCompany },
+          { model: BudgetPrice },
+        ],
       });
-      res.status(200).json(budgets);
+
+      res.status(200).json(budgetItems);
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Erro ao buscar os orçamentos" });
     }
   }
 
-  async remove(req, res) {
-    let id = req.params.id
-    await BudgetItems.destroy({ where: { budgetId: id } })
-
-    await Budget.destroy({ where: { id: id } })
-    
+  async getById(req, res) {
     try {
-        res.status(200)
-        res.send("Orçamento deletado")
-    } catch (error) {
-        res.status(406)
-        res.send(error)
+      const { id } = req.params;
+      const budgetItem = await BudgetItems.findAll({where: {budgetId: id},
+        include: [
+          { model: Budget },
+          { model: BudgetCompany },
+          { model: BudgetPrice },
+        ],
+      });
+
+      if (!budgetItem) {
+        return res
+          .status(404)
+          .json({ message: "Item de orçamento não encontrado" });
+      }
+
+      res.status(200).json(budgetItem);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erro ao buscar o item de orçamento" });
     }
   }
-
 }
 
 module.exports = new BudgetController();
