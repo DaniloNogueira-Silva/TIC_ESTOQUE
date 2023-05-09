@@ -10,15 +10,15 @@ const BudgetController = require('../controllers/budget');
 
 //category
 router.post('/admin/user', UserController.create);
-router.get('/admin/category',AdminAuth, CategoryController.showAll);
-router.post('/admin/category', AdminAuth, CategoryController.create);
-router.delete('/admin/deleteCategory/:id', CategoryController.remove);
+router.get('/admin/category', CategoryController.showAll);
+router.post('/admin/category', CategoryController.create);
+router.delete('/admin/category/:id', CategoryController.remove);
 
 //product
 router.get('/admin/product', ProductController.showAll);
 router.post('/admin/product', ProductController.create);
-router.delete('/admin/deleteProduct/:id', ProductController.remove);
-router.post('/admin/editProduct/:id', ProductController.edit);
+router.delete('/admin/product/:id', ProductController.remove);
+router.post('/admin/product/:id', ProductController.edit);
 
 //user
 router.post('/admin/user', UserController.create);
