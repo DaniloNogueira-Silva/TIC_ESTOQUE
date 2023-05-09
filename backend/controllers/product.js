@@ -2,6 +2,7 @@ const Product = require("../models/Product");
 const Category = require("../models/Category");
 
 class ProductController {
+    
   async showAll(req, res) {
     let products = await Product.findAll({
       include: [{ model: Category }],

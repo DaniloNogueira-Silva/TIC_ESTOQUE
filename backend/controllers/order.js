@@ -45,9 +45,11 @@ class OrderController {
 
   async showAll(req, res) {
     try {
-      const orders = await OrderItem.findAll({
+      await Order.findAll({
+        include: [{ model: OrderItem }],
       });
-      res.status(200).json(orders);
+
+      res.status(200).json(Order);
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Erro ao buscar os pedidos" });
@@ -57,8 +59,7 @@ class OrderController {
   async getById(req, res) {
     try {
       const { id } = req.params;
-      const ordemItem = await OrderItem.findAll({where: {orderId: id}
-      });
+      const ordemItem = await OrderItem.findAll({ where: { orderId: id } });
 
       if (!ordemItem) {
         return res
@@ -74,16 +75,16 @@ class OrderController {
   }
 
   async remove(req, res) {
-    let id = req.params.id
-    await Order.destroy({ where: { id: id } })
     try {
-        res.status(200)
-        res.send("Pedido deletado")
+      let id = req.params.id;
+      await Order.destroy({ where: { id: id } });
+      res.status(200);
+      res.send("Pedido deletado");
     } catch (error) {
-        res.status(406)
-        res.send(error)
+      console.error(error);
+      res.status(406).send({ message: "Erro ao deletar o pedido" });
     }
-}
+  }
 }
 
 module.exports = new OrderController();
