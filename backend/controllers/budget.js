@@ -4,21 +4,30 @@ const {
   BudgetCompany,
   BudgetPrice,
 } = require("../models/Budget");
+const {companyValidation} = require("../validations/Validations");
+const {Cpf, Cnpj, Phone} = require("br-helpers")
 
 class BudgetController {
   async create(req, res) {
     try {
       const { name, file, responsible_name, cpf, rg, itens, empresas, precos } =
         req.body; // Destructure `itens`, `empresas`, and `precos` from `req.body`
-
-      // Criar orçamento
-      const budget = await Budget.create({
-        name,
-        file,
-        responsible_name,
-        cpf,
-        rg,
-      });
+      const validationCpf = Cpf.isValid(cpf)
+      if (validationCpf == true) {
+        Cpf.format(cpf)
+        // Criar orçamento
+        const budget = await Budget.create({
+          name,
+          file,
+          responsible_name,
+          cpf,
+          rg,
+        });
+      } else {
+        return res.status(401).send("Número de cpf inválido")
+      }
+      
+      
 
       // Criar valores
       const budgetPrices = await Promise.all(
@@ -30,10 +39,19 @@ class BudgetController {
           });
         })
       );
-
+      
+      
       // Adicionar empresas no orçamento
       const budgetCompanies = await Promise.all(
         empresas.map(async ({ razao_social, cnpj, telefone }) => {
+          const validacaoTelefone = Phone.isValid(telefone)
+          const validationCnpj = Cnpj.isValid(cnpj)
+          await companyValidation.validate({razao_social})
+          if (validationCnpj == false || validacaoTelefone == false) {
+            return res.status(401).send("Dados inválidos")
+          }
+          Cnpj.format(cnpj)
+          Phone.format(telefone)
           return await BudgetCompany.create({
             razao_social,
             cnpj,
@@ -53,25 +71,12 @@ class BudgetController {
         })
       );
 
-      const response = {
-        id: budget.id,
-        name: budget.name,
-        file: budget.file,
-        responsible_name: budget.responsible_name,
-        cpf: budget.cpf,
-        rg: budget.rg,
-        itens: budgetItems.map((item) => ({
-          id: item.id,
-          budgetId: item.budgetId,
-          budgetCompanyId: item.budgetCompanyId,
-          budgetPriceId: item.budgetPriceId,
-        })),
-      };
-
-      res.status(201).json(response);
+      if (res.headersSent) {
+        return;
+      }
+      return res.status(201).send("Orçamento criado")
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erro ao criar o orçamento" });
+      return res.status(400).send({ message: "Erro ao criar o orçamento" });
     }
   }
 

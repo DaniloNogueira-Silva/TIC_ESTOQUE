@@ -1,7 +1,7 @@
 const { User, PasswordToken } = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
-const {userValidation, passwordValidation} = require("../validations/userValidations");
+const {userValidation, passwordValidation} = require("../validations/Validations");
 const nodemailer = require("nodemailer")
 
 class UserController {

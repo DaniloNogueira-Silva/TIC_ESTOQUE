@@ -22,7 +22,6 @@ class ProductController {
       } else {
         await Product.create({
           name,
-          measure,
           location,
           quantity,
           categoryId: category,

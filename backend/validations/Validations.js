@@ -11,4 +11,8 @@ const passwordValidation = yup.object({
     password: yup.string().required().min(6)
 });
 
-module.exports = {userValidation, passwordValidation}
+const companyValidation = yup.object({
+    razao_social: yup.string().required(),
+})
+    
+module.exports = {userValidation, passwordValidation, companyValidation}
