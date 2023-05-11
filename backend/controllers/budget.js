@@ -92,6 +92,18 @@ class BudgetController {
     }
   }
 
+  async showCompanies(req, res) {
+    try {
+      const budgetCompanies = await BudgetCompany.findAll({
+      });
+
+      res.status(200).json(budgetCompanies);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erro ao buscar as empresas" });
+    }
+  }
+
   async getById(req, res) {
     try {
       const { id } = req.params;

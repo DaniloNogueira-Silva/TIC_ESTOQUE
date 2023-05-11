@@ -48,6 +48,7 @@ router.get('/admin/buylistsearch', BuyListController.showBuyList);
 router.post('/admin/budget', BudgetController.create);
 router.get('/admin/budget', BudgetController.showAll);
 router.get('/admin/budget/:id', BudgetController.getById);
+router.get('/admin/budgetcompanies', BudgetController.showCompanies)
 
 //Measure
 router.post('/admin/measure', MeasureController.create);
