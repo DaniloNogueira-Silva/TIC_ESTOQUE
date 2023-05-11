@@ -26,3 +26,91 @@
   - TOKEN_SECRET = ex:"escrevaUmMonteDeCaractereAleatório"
 6) Abre o MYSQL e crie um banco de dados chamado "tic_estoque"
 7) Use o comando npm start no terminal para rodar o projeto backend
+
+## Parâmetro das requisições
+
+1) Create User: 
+
+  {
+    "email": "string",
+    "password": "string",
+    "name": "string",
+    "isAdmin": boolean
+
+  }
+
+2) Create Measure:
+
+  {
+    "unit_measure": "string",
+  }
+
+3) Create Category:
+
+  {
+    "name": "string",
+  }
+4) Create Product:
+
+  {
+    "name": "string",
+    "location": "string",
+    "quantity": number,
+    "categoryId": number - id de uma categoria existente,
+    "measureId": number - id de uma measure existente
+  }
+
+5) Create Buylist:
+
+  {
+    "name": "string",
+  }
+
+6) Create Order:
+
+  {
+    "status":
+    "expected_date":
+    "items": [
+      {
+        "productId": "number - id de um produto existente",
+        "quantityInStock": number,
+        "newQuantity": number
+      }
+    ]
+
+  }
+
+7) Create Budget:
+
+  {
+    "name": "string",
+    "file": "string",
+    "responsible_name": "string",
+    "cpf": "number",
+    "rg": "number",
+    "precos": [
+        {
+            "descricao":  "string",
+            "valor": "number",
+            "unidade": "number"
+        }
+    ],
+    "empresas": [
+        {
+            "razao_social": "string",
+            "cnpj": "number",
+            "telefone": "number"
+        } 
+    ],
+    "itens": [
+        {
+            "budgetCompanyId": "number",
+            "budgetPriceId": "number",
+            "budgetId": "number"
+        }
+    ]
+
+       
+}
+

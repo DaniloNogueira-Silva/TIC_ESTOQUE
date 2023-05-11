@@ -26,4 +26,4 @@ class MeasureController {
   }
 }
 
-module.exports = new MeasureController()
+module.exports = new MeasureController();
