@@ -1,31 +1,32 @@
 const Product = require("../models/Product");
 const Category = require("../models/Category");
+const Measure = require("../models/Measure");
 
 class ProductController {
-    
   async showAll(req, res) {
     let products = await Product.findAll({
-      include: [{ model: Category }],
+      include: [{ model: Category }, { model: Measure }],
     });
     res.json(products);
   }
 
   async create(req, res) {
     try {
-      let name = req.body.name;
-      let measure = req.body.measure;
-      let location = req.body.location;
-      let category = req.body.category;
-      let idExist = await Category.findByPk(category);
+      const { name, measure, location, category, quantity } = req.body;
 
-      if (idExist == undefined) {
-        res.send("Id da categoria não existe");
+      let idExist = await Category.findByPk(category);
+      let idExistMeasure = await Measure.findByPk(measure);
+
+      if (idExist == undefined && idExistMeasure == undefined) {
+        res.send("Id da categoria ou id da quantidade não existe");
       } else {
         await Product.create({
           name,
           measure,
           location,
+          quantity,
           categoryId: category,
+          measureId: measure,
         });
         res.status(200);
         res.send("Produto cadastrado");
@@ -37,7 +38,7 @@ class ProductController {
 
   async edit(req, res) {
     let id = req.params.id;
-    const { name, measure, location, category } = req.body;
+    const { name, measure, location, category, quantity } = req.body;
     let idExist = await Category.findByPk(category);
 
     if (idExist == undefined) {
@@ -49,6 +50,8 @@ class ProductController {
           name: name,
           measure: measure,
           location: location,
+          quantity: quantity,
+          measureId: measure,
           categoryId: category,
         },
         { where: { id: id } }

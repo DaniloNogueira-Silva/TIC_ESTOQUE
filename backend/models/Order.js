@@ -15,7 +15,11 @@ const Order = connection.define('orders', {
 })
 
 const OrderItem = connection.define('order_items', {
-    quantity: {
+    quantityInStock: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    newQuantity: {
         type: Sequelize.INTEGER,
         allowNull: false
     },

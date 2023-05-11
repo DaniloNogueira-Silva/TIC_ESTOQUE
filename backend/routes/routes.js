@@ -7,6 +7,7 @@ const OrderController = require('../controllers/order');
 const BuyListController = require('../controllers/buylist');
 const AdminAuth = require('../middleware/AdminAuth');
 const BudgetController = require('../controllers/budget');
+const MeasureController = require('../controllers/measure');
 
 //category
 router.post('/admin/user', UserController.create);
@@ -35,6 +36,8 @@ router.post('/admin/order', OrderController.create);
 router.get('/admin/order', OrderController.showAll);
 router.delete('/admin/order/:id', OrderController.remove);
 router.get('/admin/order/:id', OrderController.getById);
+router.put('/admin/order/quant', OrderController.updateQuantProd);
+router.get('/admin/latest', OrderController.latest);
 
 //Buylist
 router.get('/admin/buylist', BuyListController.index);
@@ -45,6 +48,11 @@ router.get('/admin/buylistsearch', BuyListController.showBuyList);
 router.post('/admin/budget', BudgetController.create);
 router.get('/admin/budget', BudgetController.showAll);
 router.get('/admin/budget/:id', BudgetController.getById);
+
+//Measure
+router.post('/admin/measure', MeasureController.create);
+router.get('/admin/measure', MeasureController.showAll);
+
 
 
 

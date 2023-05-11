@@ -12,6 +12,7 @@ const Product = require('./models/Product');
 const Order = require('./models/Order');
 const Budget = require('./models/Budget');
 const BuyList = require('./models/BuyList');
+const Measure = require('./models/Measure');
 
 // banco
 connection
