@@ -36,7 +36,7 @@ class ProductController {
   }
 
   async edit(req, res) {
-    let id = req.params.id;
+    let id = req.body;
     const { name, measure, location, category, quantity } = req.body;
     let idExist = await Category.findByPk(category);
 

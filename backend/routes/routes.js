@@ -19,7 +19,7 @@ router.delete('/admin/category/:id', CategoryController.remove);
 router.get('/admin/product', ProductController.showAll);
 router.post('/admin/product', ProductController.create);
 router.delete('/admin/product/:id', ProductController.remove);
-router.post('/admin/product/:id', ProductController.edit);
+router.put('/admin/product', ProductController.edit);
 
 //user
 router.post('/admin/user', UserController.create);
