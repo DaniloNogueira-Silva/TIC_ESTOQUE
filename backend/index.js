@@ -6,13 +6,7 @@ const router = require('./routes/routes');
 const bodyParser = require("body-parser");
 
 // models
-const User = require('./models/User');
-const Category = require('./models/Category');
-const Product = require('./models/Product');
-const Order = require('./models/Order');
-const Budget = require('./models/Budget');
-const BuyList = require('./models/BuyList');
-const Measure = require('./models/Measure');
+const { default: models } = require("./models/models");
 
 // banco
 connection
