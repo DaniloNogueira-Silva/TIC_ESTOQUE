@@ -35,6 +35,24 @@ class ProductController {
     }
   }
 
+  async getById(req, res) {
+    try {
+      const { id } = req.params;
+      const product = await Product.findByPk(id);
+
+      if (product == undefined) {
+        return res
+          .status(404)
+          .json({ message: "Id do produto não encontrado" });
+      }
+
+      res.status(200).json(product);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erro ao buscar o produto" });
+    }
+  }
+
   async edit(req, res) {
     let id = req.body;
     const { name, measure, location, category, quantity } = req.body;

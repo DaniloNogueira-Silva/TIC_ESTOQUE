@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv").config();
 const connection = require("./db");
-const router = require('./routes/routes');
+const routes = require('./routes/routes');
 const bodyParser = require("body-parser");
 
 // models
@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 //rotas
-app.use('/', router);
+app.use('/', routes);
 
 //iniciando o server
 const port = process.env.PORT;
