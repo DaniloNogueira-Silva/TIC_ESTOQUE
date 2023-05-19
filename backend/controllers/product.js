@@ -54,29 +54,32 @@ class ProductController {
   }
 
   async edit(req, res) {
-    let id = req.body;
-    const { name, measure, location, category, quantity } = req.body;
-    let idExist = await Category.findByPk(category);
-
-    if (idExist == undefined) {
-      res.status(406);
-      res.send("Id da categoria não existe");
-    } else {
-      await Product.update(
-        {
-          name: name,
-          measure: measure,
-          location: location,
-          quantity: quantity,
-          measureId: measure,
-          categoryId: category,
-        },
-        { where: { id: id } }
-      );
-      res.status(200);
-      res.send("Deu bom a edição");
+    try {
+      const { id, name, measure, location, category, quantity } = req.body;
+      const idExist = await Category.findByPk(category);
+  
+      if (!idExist) {
+        res.status(406).send("O ID da categoria não existe");
+      } else {
+        await Product.update(
+          {
+            name: name,
+            measure: measure,
+            location: location,
+            quantity: quantity,
+            measureId: measure,
+            categoryId: category,
+          },
+          { where: { id: id } }
+        );
+        res.status(200).send("Produto editado com sucesso");
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Erro ao editar o produto");
     }
   }
+  
 
   async remove(req, res) {
     let id = req.params.id;
