@@ -81,15 +81,24 @@ class ProductController {
   }
   
 
+  // async remove(req, res) {
+  //   let id = req.body
+  //   await Product.destroy({ where: { id: id } });
+  //   try {
+  //     res.status(200);
+  //     res.send("Produto deletado");
+  //   } catch (error) {
+  //     res.status(406);
+  //     res.send(error);
+  //   }
+  // }
   async remove(req, res) {
-    let id = req.body
-    await Product.destroy({ where: { id: id } });
     try {
-      res.status(200);
-      res.send("Produto deletado");
+      const { id } = req.body;
+      await Product.destroy({ where: { id: id } });
+      res.status(200).send("Produto deletado");
     } catch (error) {
-      res.status(406);
-      res.send(error);
+      res.status(500).send(error);
     }
   }
 }
