@@ -6,7 +6,7 @@ const AdminAuth = require('../middleware/AdminAuth');
 router.get('/', ProductController.showAll);
 router.post('/', ProductController.create);
 router.get('/:id', ProductController.getById);
-router.delete('/:id', ProductController.remove);
+router.delete('/', ProductController.remove);
 router.put('/', ProductController.edit);
 
 module.exports = router;

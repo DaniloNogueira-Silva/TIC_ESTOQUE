@@ -82,7 +82,7 @@ class ProductController {
   
 
   async remove(req, res) {
-    let id = req.params.id;
+    let id = req.body
     await Product.destroy({ where: { id: id } });
     try {
       res.status(200);
