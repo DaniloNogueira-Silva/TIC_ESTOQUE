@@ -1,5 +1,6 @@
 const { OrderItem, Order } = require("../models/Order");
 const Product = require("../models/Product");
+const sequelize = require("sequelize")
 
 class OrderController {
   async updateQuantProd(req, res) {
@@ -73,7 +74,7 @@ class OrderController {
       );
 
       // Retorna o pedido com os itens
-
+      
       res.status(201).json();
     } catch (err) {
       console.error(err);
@@ -97,22 +98,36 @@ class OrderController {
   async latest(req, res) {
     try {
       const orders = await Order.findAll({
-        include: [{ model: OrderItem }],
         order: [['createdAt', 'DESC']],
         limit: 10
       });
   
-      res.status(200).json(orders);
+      const orderIds = orders.map(order => order.id); // Obter os IDs dos pedidos
+  
+      const orderItemsCountMap = {};
+  
+      for (const orderId of orderIds) {
+        const count = await OrderItem.count({ where: { orderId } });
+        orderItemsCountMap[orderId] = count;
+      }
+  
+      const ordersWithQuant = orders.map(order => ({
+        ...order.toJSON(),
+        quant: orderItemsCountMap[order.id] || 0
+      }));
+  
+      res.status(200).json({ orders: ordersWithQuant });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Erro ao buscar os pedidos" });
     }
   }
-
+  
+  
   async getById(req, res) {
     try {
       const { id } = req.params;
-      const orderItems = await OrderItem.findAll({ where: { orderId: id } });
+      const orderItems = await OrderItem.findAndCountAll({ where: { orderId: id } });
 
       if (!orderItems || orderItems.length === 0) {
         return res
