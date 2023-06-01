@@ -1,5 +1,4 @@
 const {
-  BudgetItems,
   Budget,
   BudgetCompany,
   BudgetPrice,
@@ -10,8 +9,7 @@ const { Cpf, Cnpj, Phone } = require("br-helpers");
 class BudgetController {
   async create(req, res) {
     try {
-      const { name, file, responsible_name, cpf, rg, itens, empresas, precos } =
-        req.body;
+      const { name, file, responsible_name, cpf, rg, empresas, precos } = req.body;
       const validationCpf = Cpf.isValid(cpf);
       if (validationCpf == true) {
         Cpf.format(cpf);
@@ -23,66 +21,56 @@ class BudgetController {
           cpf,
           rg,
         });
+  
+        // Criar valores
+        const budgetPrices = await Promise.all(
+          precos.map(async ({ descricao, valorA,valorB,valorC, unidade }) => {
+            return await BudgetPrice.create({
+              budgetId: budget.id,
+              descricao,
+              valorA,
+              valorB,
+              valorC,
+              unidade,
+            });
+          })
+        );
+  
+        // Adicionar empresas no orçamento
+        const budgetCompanies = await Promise.all(
+          empresas.map(async ({ razao_social, cnpj, telefone }) => {
+            // const validacaoTelefone = Phone.isValid(telefone);
+            // const validationCnpj = Cnpj.isValid(cnpj);
+            // await companyValidation.validate({ razao_social });
+            // if (validationCnpj == false || validacaoTelefone == false) {
+            //   return res.status(401).send("Dados inválidos");
+            // }
+            // Cnpj.format(cnpj);
+            // Phone.format(telefone);
+            return await BudgetCompany.create({
+              budgetId: budget.id,
+              razao_social,
+              cnpj,
+              telefone,
+            });
+          })
+        );
+  
+        return res.status(201).send("Orçamento criado");
       } else {
-        return res.status(401).send("Número de cpf inválido");
+        return res.status(401).send("Número de CPF inválido");
       }
-
-      // Criar valores
-      const budgetPrices = await Promise.all(
-        precos.map(async ({ descricao, valor, unidade }) => {
-          return await BudgetPrice.create({
-            descricao,
-            valor,
-            unidade,
-          });
-        })
-      );
-
-      // Adicionar empresas no orçamento
-      const budgetCompanies = await Promise.all(
-        empresas.map(async ({ razao_social, cnpj, telefone }) => {
-          const validacaoTelefone = Phone.isValid(telefone);
-          const validationCnpj = Cnpj.isValid(cnpj);
-          await companyValidation.validate({ razao_social });
-          if (validationCnpj == false || validacaoTelefone == false) {
-            return res.status(401).send("Dados inválidos");
-          }
-          Cnpj.format(cnpj);
-          Phone.format(telefone);
-          return await BudgetCompany.create({
-            razao_social,
-            cnpj,
-            telefone,
-          });
-        })
-      );
-
-      // Adicionar os itens no orçamento
-      const budgetItems = await Promise.all(
-        itens.map(async ({ budgetCompanyId, budgetPriceId, budgetId }) => {
-          return await BudgetItems.create({
-            budgetCompanyId,
-            budgetPriceId,
-            budgetId,
-          });
-        })
-      );
-
-      //só deus sabe
-      if (res.headersSent) {
-        return;
-      }
-      return res.status(201).send("Orçamento criado");
     } catch (error) {
+      console.error(error);
       return res.status(400).send({ message: "Erro ao criar o orçamento" });
     }
   }
+  
 
   async showAll(req, res) {
     try {
-      const budgetItems = await BudgetItems.findAll({
+      const budgetItems = await Budget.findAll({
         include: [
-          { model: Budget },
           { model: BudgetCompany },
           { model: BudgetPrice },
         ],
@@ -109,22 +97,21 @@ class BudgetController {
   async getById(req, res) {
     try {
       const { id } = req.params;
-      const budgetItem = await BudgetItems.findAll({
-        where: { budgetId: id },
+      const budget = await Budget.findAll({
+        where: { id: id },
         include: [
-          { model: Budget },
           { model: BudgetCompany },
           { model: BudgetPrice },
         ],
       });
 
-      if (!budgetItem) {
+      if (!budget) {
         return res
           .status(404)
           .json({ message: "Item de orçamento não encontrado" });
       }
 
-      res.status(200).json(budgetItem);
+      res.status(200).json(budget);
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Erro ao buscar o item de orçamento" });
