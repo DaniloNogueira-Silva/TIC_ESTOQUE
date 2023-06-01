@@ -80,18 +80,6 @@ class ProductController {
     }
   }
   
-
-  // async remove(req, res) {
-  //   let id = req.body
-  //   await Product.destroy({ where: { id: id } });
-  //   try {
-  //     res.status(200);
-  //     res.send("Produto deletado");
-  //   } catch (error) {
-  //     res.status(406);
-  //     res.send(error);
-  //   }
-  // }
   async remove(req, res) {
     try {
       const { id } = req.body;
