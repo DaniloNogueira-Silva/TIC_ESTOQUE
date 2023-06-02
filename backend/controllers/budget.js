@@ -135,7 +135,7 @@ class BudgetController {
           month: "long",
           year: "numeric",
         }).format(date);
-        console.log(formattedDate); // Saída: "16 de junho de 2023"
+        
 
 
         const budgetCompanies = budget.budget_companies;
@@ -158,17 +158,20 @@ class BudgetController {
               </tr>
           `;
 
-        budgetCompanies.forEach((company) => {
+        budgetCompanies.forEach((company, index) => {
           const dataCompany = {
             razaoSocial: company.razao_social,
             cnpj: company.cnpj,
             telefone: company.telefone,
           };
+
+          let letra = String.fromCharCode(66 + index - 1);
+          
           texto += 
           `
               <tr>
                 <td style="border: 1px solid black; padding: 8px; text-align: left; width: 130px ">
-                  PROPOENTE
+                  PROPOENTE (${letra})
                 </td>
                 <td style="border: 1px solid black; padding: 8px; text-align: left;">
                   Razão Social: ${dataCompany.razaoSocial}<br> CNPJ: ${dataCompany.cnpj}<br> Telefone: ${dataCompany.telefone}
@@ -246,10 +249,12 @@ class BudgetController {
               </td>
             </tr>
           `
-
-          Number(totalA = dataPrice.unidade * (totalA + dataPrice.valorA))
-          Number(totalB = dataPrice.unidade * (totalB + dataPrice.valorB))
-          Number(totalC = dataPrice.unidade * (totalC + dataPrice.valorC))
+          
+            totalA += dataPrice.unidade * dataPrice.valorA
+            totalB += dataPrice.unidade * dataPrice.valorB
+            totalC += dataPrice.unidade * dataPrice.valorC
+          
+          
         });
 
 
@@ -281,7 +286,7 @@ class BudgetController {
 
         pdf
           .create(texto, {})
-          .toFile(`../pdfs/${dataBudget.name}.pdf`, (err) => {
+          .toFile(`./pdfs/${dataBudget.name}.pdf`, (err) => {
             if (err) {
               res.status(500).send("Erro ao fazer o pdf");
             } else {
