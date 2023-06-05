@@ -9,7 +9,7 @@ router.get('/:id', UserController.findById);
 router.delete('/:id', UserController.remove);
 router.put('/:id', UserController.update);
 router.post('/auth', UserController.login);
-router.post('/recoverpassword/:id', UserController.recoverPassword);
+router.post('/recoverpassword', UserController.recoverPassword);
 router.post('/changepassword', UserController.changePassword);
 
 module.exports = router;

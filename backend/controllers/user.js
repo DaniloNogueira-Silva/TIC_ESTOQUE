@@ -1,4 +1,4 @@
-const { User, PasswordToken } = require("../models/User");
+const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const {userValidation, passwordValidation} = require("../validations/Validations");
@@ -24,10 +24,7 @@ class UserController {
   async create(req, res) {
     try {
       await userValidation.validate(req.body)
-      const name = req.body.name;
-      const email = req.body.email;
-      const password = req.body.password;
-      const isAdmin = req.body.isAdmin;
+      const {name, email, password, isAdmin } = req.body;
 
       await User.findOne({ where: { email: email } }).then((user) => {
         if (user == undefined) {
@@ -109,7 +106,6 @@ class UserController {
   }
 
   async recoverPassword(req, res) {
-    const id = req.params.id
     const email = req.body.email
     const user = await User.findOne({
       where: {
@@ -123,11 +119,13 @@ class UserController {
         for (let i = 0, n = charset.length; i <= 10 ; i++) {
           token += charset.charAt(Math.floor(Math.random() * n))  
         }
-
-        await PasswordToken.create({
-          userId: id,
-          used: 0,
+        
+        await User.update({
           token: token // UUID
+        }, {
+          where: {
+            email: email
+          }
         });
 
         const transport = nodemailer.createTransport({
@@ -159,18 +157,17 @@ class UserController {
 
   async changePassword(req, res) {
     await passwordValidation.validate(req.body)
-    const token = req.body.token;
+    let token = req.body.token;
     const password = req.body.password;
     let status = false
     let isTokenValid
     try {
-      isTokenValid = await PasswordToken.findOne({
+      isTokenValid = await User.findOne({
         where: {
           token: token
         },
         raw: true
       });
-      console.log(isTokenValid)
 
       if (isTokenValid != undefined) {
         
@@ -189,23 +186,15 @@ class UserController {
     }
     if (status) {
         const newPassword = password
-        const id = isTokenValid.userId
-        const token = isTokenValid.token
+        const id = isTokenValid.id
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(newPassword, salt);
-        await User.update({password: hash}, {where: {id: id}} );
-        await PasswordToken.update({used: 1}, {where: {token: token}})
+        await User.update({password: hash, used: 1}, {where: {id: id}} );
         res.status(200).send("Senha alterada");
       } else {
         res.status(406).send("Token inválido!");
       }
   }
-
-  async setUsed(token){
-    await PasswordToken.update({used: 1}).where({token: token});
-  }
-
-  
 }
 
 module.exports = new UserController();

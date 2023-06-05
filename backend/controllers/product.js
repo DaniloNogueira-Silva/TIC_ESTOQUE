@@ -12,7 +12,7 @@ class ProductController {
 
   async create(req, res) {
     try {
-      const { name, measure, location, category, quantity } = req.body;
+      const { name, measure, location, purchase_allowed, category, quantity,  } = req.body;
 
       let idExist = await Category.findByPk(category);
       let idExistMeasure = await Measure.findByPk(measure);
@@ -24,6 +24,7 @@ class ProductController {
           name,
           location,
           quantity,
+          purchase_allowed,
           categoryId: category,
           measureId: measure,
         });

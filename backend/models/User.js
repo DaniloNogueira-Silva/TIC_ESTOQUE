@@ -15,23 +15,15 @@ const User = connection.define('users', {
     }, isAdmin:{
         type: Sequelize.BOOLEAN,
         allowNull: false
-    }
+    }, token:{
+        type: Sequelize.STRING,
+        allowNull: true
+    }, used: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true
+    } 
 })
 
 //User.sync({force: true})
 
-const PasswordToken = connection.define('passwordTokens', {
-    token:{
-        type: Sequelize.STRING,
-        allowNull: false
-    }, used: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false
-    } 
-})
-
-PasswordToken.belongsTo(User)
-User.hasMany(PasswordToken)
-//PasswordToken.sync({force: true})
-
-module.exports = {User, PasswordToken};
+module.exports = User;

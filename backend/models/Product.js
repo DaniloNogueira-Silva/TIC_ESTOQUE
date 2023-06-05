@@ -10,9 +10,11 @@ const Product = connection.define('products', {
     }, location:{
         type: Sequelize.STRING,
         allowNull: false
-    },
-    quantity: {
+    }, quantity: {
         type: Sequelize.INTEGER,
+        allowNull: false
+    }, purchase_allowed: {
+        type: Sequelize.BOOLEAN,
         allowNull: false
     }
 })
