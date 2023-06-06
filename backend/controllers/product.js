@@ -12,12 +12,12 @@ class ProductController {
 
   async create(req, res) {
     try {
-      const { name, measure, location, purchase_allowed, category, quantity,  } = req.body;
+      const { name, location, quantity, purchase_allowed, vemDaPrefeitura, category, measure } = req.body;
+      
+      const idCategoryExist = await Category.findByPk(category);
+      const idMeasureExist = await Measure.findByPk(measure);
 
-      let idExist = await Category.findByPk(category);
-      let idExistMeasure = await Measure.findByPk(measure);
-
-      if (idExist == undefined && idExistMeasure == undefined) {
+      if (idCategoryExist == undefined && idMeasureExist == undefined) {
         res.send("Id da categoria ou id da quantidade não existe");
       } else {
         await Product.create({
@@ -25,6 +25,7 @@ class ProductController {
           location,
           quantity,
           purchase_allowed,
+          vemDaPrefeitura,
           categoryId: category,
           measureId: measure,
         });
@@ -56,20 +57,24 @@ class ProductController {
 
   async edit(req, res) {
     try {
-      const { id, name, measure, location, category, quantity } = req.body;
-      const idExist = await Category.findByPk(category);
+      const id = req.params.id
+      const { name, location, quantity, purchase_allowed, vemDaPrefeitura, category, measure } = req.body;
   
-      if (!idExist) {
-        res.status(406).send("O ID da categoria não existe");
+      const idCategoryExist = await Category.findByPk(category);
+      const idMeasureExist = await Measure.findByPk(measure);
+
+      if (idCategoryExist == undefined && idMeasureExist == undefined) {
+        res.send("Id da categoria ou id da quantidade não existe");
       } else {
         await Product.update(
           {
-            name: name,
-            measure: measure,
-            location: location,
-            quantity: quantity,
-            measureId: measure,
+            name,
+            location,
+            quantity,
+            purchase_allowed,
+            vemDaPrefeitura,
             categoryId: category,
+            measureId: measure,
           },
           { where: { id: id } }
         );
@@ -80,7 +85,7 @@ class ProductController {
       res.status(500).send("Erro ao editar o produto");
     }
   }
-  
+
   async remove(req, res) {
     try {
       const { id } = req.body;
