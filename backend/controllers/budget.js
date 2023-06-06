@@ -1,4 +1,4 @@
-const { Budget, BudgetCompany, BudgetPrice } = require("../models/Budget");
+const { Budget, BudgetCompany, BudgetPrice, BudgetItems } = require("../models/Budget");
 const { companyValidation } = require("../validations/Validations");
 const { Cpf, Cnpj, Phone } = require("br-helpers");
 const moment = require('moment');
@@ -7,7 +7,7 @@ const pdf = require("html-pdf");
 class BudgetController {
   async create(req, res) {
     try {
-      const { name, file, responsible_name, cpf, rg, empresas, precos } =
+      const { name, file, responsible_name, cpf, rg,companies, prices, items } =
         req.body;
       const validationCpf = Cpf.isValid(cpf);
       if (validationCpf == true) {
@@ -23,13 +23,10 @@ class BudgetController {
 
         // Criar valores
         const budgetPrices = await Promise.all(
-          precos.map(async ({ descricao, valorA, valorB, valorC, unidade }) => {
+          prices.map(async ({ descricao, valor, unidade }) => {
             return await BudgetPrice.create({
-              budgetId: budget.id,
               descricao,
-              valorA,
-              valorB,
-              valorC,
+              valor,
               unidade,
             });
           })
@@ -37,20 +34,21 @@ class BudgetController {
 
         // Adicionar empresas no orçamento
         const budgetCompanies = await Promise.all(
-          empresas.map(async ({ razao_social, cnpj, telefone }) => {
-            // const validacaoTelefone = Phone.isValid(telefone);
-            // const validationCnpj = Cnpj.isValid(cnpj);
-            // await companyValidation.validate({ razao_social });
-            // if (validationCnpj == false || validacaoTelefone == false) {
-            //   return res.status(401).send("Dados inválidos");
-            // }
-            // Cnpj.format(cnpj);
-            // Phone.format(telefone);
+          companies.map(async ({ razao_social, cnpj, telefone }) => {
             return await BudgetCompany.create({
-              budgetId: budget.id,
               razao_social,
               cnpj,
               telefone,
+            });
+          })
+        );        
+
+        const budgetItems = await Promise.all(
+          items.map(async ({budgetId, budgetCompanyId, budgetPriceId }) => {
+            return await BudgetItems.create({
+              budgetId,
+              budgetCompanyId,
+              budgetPriceId
             });
           })
         );
@@ -67,8 +65,8 @@ class BudgetController {
 
   async showAll(req, res) {
     try {
-      const budgetItems = await Budget.findAll({
-        include: [{ model: BudgetCompany }, { model: BudgetPrice }],
+      const budgetItems = await BudgetItems.findAll({
+        include: [{ model: BudgetCompany }, { model: BudgetPrice }, {model: Budget}],
       });
 
       res.status(200).json(budgetItems);
@@ -141,7 +139,8 @@ class BudgetController {
         const budgetCompanies = budget.budget_companies;
         const budgetPrices = budget.budget_prices;
         let texto = `
-            <h4 style="color: gray; text-align: center; margin-top: 100px "> NV SOCIEDADE SOLIDÁRIA </h4>
+            <img src="../../image/logo.png">
+            <h4 style="color: gray; text-align: center; margin-top: 50px "> NV SOCIEDADE SOLIDÁRIA </h4>
             <p style="color: gray; text-align: center "> Gestora do CCI Nossa Senhora da Conceição </p>
             <p style="color: gray; text-align: center "> CNPJ n. 05.166.687/0002-34 </p>
             <p style="font-weight: bold; text-align: center ">CONSOLIDAÇÃO DE PESQUISAS DE PREÇOS</p>
