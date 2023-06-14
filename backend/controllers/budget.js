@@ -1,17 +1,19 @@
-const { Budget, BudgetCompany, BudgetPrice, BudgetItems } = require("../models/Budget");
+const { Budget, BudgetCompany, BudgetPrice } = require("../models/Budget");
 const { companyValidation } = require("../validations/Validations");
 const { Cpf, Cnpj, Phone } = require("br-helpers");
 const moment = require('moment');
 const pdf = require("html-pdf");
+const fs = require("fs")
+const path = require("path")
 
 class BudgetController {
   async create(req, res) {
     try {
-      const { name, file, responsible_name, cpf, rg,companies, prices, items } =
+      const { name, file, responsible_name, cpf, rg, companies, prices } =
         req.body;
-      const validationCpf = Cpf.isValid(cpf);
-      if (validationCpf == true) {
-        Cpf.format(cpf);
+      //const validationCpf = Cpf.isValid(cpf);
+      if (name != undefined) {
+        //Cpf.format(cpf);
         // Criar orçamento
         const budget = await Budget.create({
           name,
@@ -23,10 +25,13 @@ class BudgetController {
 
         // Criar valores
         const budgetPrices = await Promise.all(
-          prices.map(async ({ descricao, valor, unidade }) => {
+          prices.map(async ({ descricao, valorA, valorB, valorC, unidade }) => {
             return await BudgetPrice.create({
+              budgetId: budget.id,
               descricao,
-              valor,
+              valorA,
+              valorB,
+              valorC,
               unidade,
             });
           })
@@ -35,20 +40,19 @@ class BudgetController {
         // Adicionar empresas no orçamento
         const budgetCompanies = await Promise.all(
           companies.map(async ({ razao_social, cnpj, telefone }) => {
+            // const validacaoTelefone = Phone.isValid(telefone);
+            // const validationCnpj = Cnpj.isValid(cnpj);
+            // await companyValidation.validate({ razao_social });
+            // if (validationCnpj == false || validacaoTelefone == false) {
+            //   return res.status(401).send("Dados inválidos");
+            // }
+            // Cnpj.format(cnpj);
+            // Phone.format(telefone);
             return await BudgetCompany.create({
+              budgetId: budget.id,
               razao_social,
               cnpj,
               telefone,
-            });
-          })
-        );        
-
-        const budgetItems = await Promise.all(
-          items.map(async ({budgetId, budgetCompanyId, budgetPriceId }) => {
-            return await BudgetItems.create({
-              budgetId,
-              budgetCompanyId,
-              budgetPriceId
             });
           })
         );
@@ -65,8 +69,8 @@ class BudgetController {
 
   async showAll(req, res) {
     try {
-      const budgetItems = await BudgetItems.findAll({
-        include: [{ model: BudgetCompany }, { model: BudgetPrice }, {model: Budget}],
+      const budgetItems = await Budget.findAll({
+        include: [{ model: BudgetCompany }, { model: BudgetPrice }],
       });
 
       res.status(200).json(budgetItems);
@@ -91,8 +95,8 @@ class BudgetController {
     try {
       const { id } = req.params;
       const budget = await Budget.findAll({
-        where: { id: id },
         include: [{ model: BudgetCompany }, { model: BudgetPrice }],
+        where: { id: id }
       });
 
       if (!budget) {
@@ -115,6 +119,7 @@ class BudgetController {
         where: { id: id },
         include: [{ model: BudgetCompany }, { model: BudgetPrice }],
       });
+      
 
       conteudo.forEach((budget) => {
         const dataBudget = {
@@ -124,22 +129,26 @@ class BudgetController {
           cpf: budget.cpf,
           createdAt: budget.createdAt
         };
+        
 
         const data = dataBudget.createdAt// Exemplo de data do campo createdAt
-
         const date = new Date(data);
         const formattedDate = new Intl.DateTimeFormat("pt-BR", {
           day: "numeric",
           month: "long",
           year: "numeric",
         }).format(date);
-        
+
 
 
         const budgetCompanies = budget.budget_companies;
         const budgetPrices = budget.budget_prices;
+
+        const imagePath = './image/creche.jpg';
+        const imageBase64 = fs.readFileSync(path.resolve(imagePath), 'base64');
+        
         let texto = `
-            <img src="../../image/logo.png">
+            <p style="margin-right: 0px"> <img src="data:image/jpeg;base64,${imageBase64}" alt="Logo da creche"> </p>
             <h4 style="color: gray; text-align: center; margin-top: 50px "> NV SOCIEDADE SOLIDÁRIA </h4>
             <p style="color: gray; text-align: center "> Gestora do CCI Nossa Senhora da Conceição </p>
             <p style="color: gray; text-align: center "> CNPJ n. 05.166.687/0002-34 </p>
@@ -165,9 +174,9 @@ class BudgetController {
           };
 
           let letra = String.fromCharCode(66 + index - 1);
-          
-          texto += 
-          `
+
+          texto +=
+            `
               <tr>
                 <td style="border: 1px solid black; padding: 8px; text-align: left; width: 130px ">
                   PROPOENTE (${letra})
@@ -224,7 +233,7 @@ class BudgetController {
             valorC: price.valorC,
           };
 
-          
+
 
           texto += `
             <tr>
@@ -248,17 +257,17 @@ class BudgetController {
               </td>
             </tr>
           `
-          
-            totalA += dataPrice.unidade * dataPrice.valorA
-            totalB += dataPrice.unidade * dataPrice.valorB
-            totalC += dataPrice.unidade * dataPrice.valorC
-          
-          
+
+          totalA += dataPrice.unidade * dataPrice.valorA
+          totalB += dataPrice.unidade * dataPrice.valorB
+          totalC += dataPrice.unidade * dataPrice.valorC
+
+
         });
 
 
-        texto += 
-        `
+        texto +=
+          `
             <tr>
               <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;"> Valor Total da Proposta </td>
               <td  style="border: 1px solid black; padding: 8px; text-align: center;"> R$ ${totalA} </td>
@@ -285,7 +294,7 @@ class BudgetController {
 
         pdf
           .create(texto, {})
-          .toFile(`./pdfs/${dataBudget.name}.pdf`, (err) => {
+          .toFile(`./pdfs/${budget.name}.pdf`, (err) => {
             if (err) {
               res.status(500).send("Erro ao fazer o pdf");
             } else {

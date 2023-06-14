@@ -32,45 +32,39 @@ const BudgetCompany = connection.define('budget_company', {
     }
 });
 
-const BudgetPrice = connection.define('budget_prices', {
+const BudgetPrice = connection.define('budget_price', {
     descricao: {
         type: Sequelize.STRING,
         allowNull: false
-    },
-    unidade: {
+    }, valorA: {
         type: Sequelize.INTEGER,
         allowNull: false
-    },
-    valor: {
+    }, valorB: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }, valorC: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }, unidade: {
         type: Sequelize.INTEGER,
         allowNull: false
     }
 });
 
-const BudgetItems = connection.define('budget_items', {
-
-});
-
-
-
-
 
 // Adiciona as chaves estrangeiras às tabelas
-BudgetItems.belongsTo(BudgetCompany);
-BudgetItems.belongsTo(BudgetPrice);
-BudgetItems.belongsTo(Budget);
+Budget.hasMany(BudgetCompany);
+Budget.hasMany(BudgetPrice);
 
-Budget.hasMany(BudgetItems);
-BudgetCompany.hasMany(BudgetItems);
-BudgetPrice.hasMany(BudgetItems);
-
+// Adiciona as chaves estrangeiras às tabelas
+BudgetCompany.belongsTo(Budget);
+BudgetPrice.belongsTo(Budget);
 
 // Sincroniza as tabelas
 //Budget.sync({ force: true })
 //BudgetCompany.sync({ force: true })
 //BudgetPrice.sync({ force: true })
-//BudgetItems.sync({ force: true })
 
-module.exports = { Budget, BudgetCompany, BudgetPrice, BudgetItems};
+module.exports = { Budget, BudgetCompany, BudgetPrice};
 
 
