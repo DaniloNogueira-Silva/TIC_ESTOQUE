@@ -12,7 +12,7 @@ class ProductController {
 
   async create(req, res) {
     try {
-      const { name, location, quantity, purchase_allowed, vemDaPrefeitura, category, measure } = req.body;
+      const { name, location, quantity, purchase_allowed, originCityHall, category, measure } = req.body;
       
       const idCategoryExist = await Category.findByPk(category);
       const idMeasureExist = await Measure.findByPk(measure);
@@ -25,7 +25,7 @@ class ProductController {
           location,
           quantity,
           purchase_allowed,
-          vemDaPrefeitura,
+          originCityHall,
           categoryId: category,
           measureId: measure,
         });
@@ -58,7 +58,7 @@ class ProductController {
   async edit(req, res) {
     try {
       const id = req.params.id
-      const { name, location, quantity, purchase_allowed, vemDaPrefeitura, category, measure } = req.body;
+      const { name, location, quantity, purchase_allowed, originCityHall, category, measure } = req.body;
   
       const idCategoryExist = await Category.findByPk(category);
       const idMeasureExist = await Measure.findByPk(measure);
@@ -72,7 +72,7 @@ class ProductController {
             location,
             quantity,
             purchase_allowed,
-            vemDaPrefeitura,
+            originCityHall,
             categoryId: category,
             measureId: measure,
           },

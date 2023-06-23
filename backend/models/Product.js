@@ -16,7 +16,7 @@ const Product = connection.define('products', {
     }, purchase_allowed: {
         type: Sequelize.BOOLEAN,
         allowNull: false
-    }, vemDaPrefeitura: {
+    }, originCityHall: {
         type: Sequelize.BOOLEAN,
         allowNull: false
     }
